@@ -1,6 +1,6 @@
 // Copyright 2023 Nastase Cristian-Gabriel 315CA
 
-            --  Tema 2 - Load Balancer  --
+            -- Load Balancer  --
 
     I copied my hashtable implementation from the Lab4,
 and I kept all the comments from the laboratory. I don't
