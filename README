@@ -1,0 +1,100 @@
+// Copyright 2023 Nastase Cristian-Gabriel 315CA
+
+            --  Tema 2 - Load Balancer  --
+
+    I copied my hashtable implementation from the Lab4,
+and I kept all the comments from the laboratory. I don't
+think it is necesarry to explain the hashtable implementation,
+because everyone knows it. It works, and the main goal of this
+task is the load ballancer and the servers.
+
+    I have 8 files for this task:
+        ->  main.c
+        ->  load_ballancer.c
+        ->  load_ballancer.h
+        ->  server.c
+        ->  server.h
+        ->  hashtable_impl.c
+        ->  hashtable_impl.h
+        ->  utils.h
+
+    hashtable_impl.c and hashtable_impl.h contains all the
+hashtable and linked_list functions:
+        ->  ll_create: creates a list
+        ->  ll_add_nth_node: adds a node to the
+            n-th position given by parameter
+        ->  ll_remove_nth_node: removes a node on
+            the n-th position given by parameter
+        ->  ll_get_size: returns the size of the given list
+        ->  ll_free: eliberates all the list memory
+
+        ->  compare_function_strings: compares strings
+        ->  ht_create: allocs/creates a hashtable
+        ->  ht_get: returns the value with the corresponding key
+        ->  ht_has_key: 0 if no, 1 if yes
+        ->  ht_put: adds a node in the hashtable
+        ->  ht_remove_entry: removes all the nodes from a list
+        ->  ht_free: eliberates all the memory from the hashtable
+        ->  ht_get_size: returns the size of hashtable
+        ->  ht_get_hmax: returns the max hash of hashtable
+
+    server.c and server.h contains the following functions:
+        ->  init_server_memory: initialize one server
+        ->  server_store: stores a product in the hashtable
+        ->  server_retrieve: returns the value of
+            the product with the given key
+        ->  server_remove: free's a node :)
+        ->  free_server_memory: free's all the list from the hashtable
+
+    load_ballancer.c and load_ballancer.h contains the following functions:
+        ->  ring_compare: compare function for "qsort-ing" the ring
+        ->  hash_function_servers: hashing the servers
+        ->  hash_function_key: hashing the keys
+        ->  init_load_balancer: initialize/allocs the load ballancer
+        ->  compare_servers: compare function for "qsort-ing" the servers
+        ->  find_next_server_key: searches in the ring. finds the smallest number,
+           greater than the key
+        ->  fishing_products: finds the products that needs to be stored in other server
+        ->  loader_add_server: adds a server in the load ballancer
+        ->  loader_remove_server: removes a server from the load ballancer
+        ->  loader_store: stores a product in the server given
+        ->  loader_retrieve: returns the value of the requested key
+        ->  free_load_balancer: frees the load ballancer
+
+    These files main.c and utils.h are not changed. They are exactly as I received them.
+
+Now I will explain my implementation:
+    I have in the load ballancer **servers (an array of pointers to server), an hashring,
+where I am memorising 3 * number_of_servers, because I have only one server for a server.
+I am not initializing 3 servers(the og_server, the copy1, the copy2). I have only one
+hashtable for a server.
+    The hashring array is used to observe the positions of every hash (of every server,
+copy1 and copy2).
+    I am making sure every time the hashring and the servers are sorted.
+
+//
+    Explanation for lines: 165->172 in the "load_ballancer.c" file:
+When we are adding a server, some products that are already in the system might transfer
+to the new server. A server has 3 hashes. A hash might receive products from server X,
+but another might receive product from server Y. That's why i have to call the
+"fishing_products" function three times. I call it for every new hash.
+    In this process, "find_next_server_key" helps me. It tells me the hash of the server
+which i have to extract some products. It returns the smallest number, greatest than
+the hash_key/hash_copy1_key/hash_copy2_key.
+    Next, we move on to the "fishing_products" function. Here, the server index (from
+where we have to extract products) is found. Then, we are travelling through the hashtable
+and "server_store - ing" the products.
+\\
+
+//
+    Explanation for loader_server_remove function (load_ballancer.c lines: 175->236):
+First, I am removing the 3 hashes (of the server I want to remove), from the hashring
+(194->211). Then the old hashes are not bothering us anymore and we can go trough all
+the products from the server. The function "find_next_server_key" helps again, because
+it returns the hash of the server I have to store the product (215->223).
+\\
+
+//
+    Explanation for loader_store/loader_retrieve functions:
+Searching for the server, and storing/retrieving the product
+\\

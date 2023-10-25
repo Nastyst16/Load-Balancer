@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "errno.h": "c",
+        "hashtable_impl.h": "c",
+        "stdlib.h": "c",
+        "load_balancer.h": "c",
+        "stdio.h": "c",
+        "server.h": "c",
+        "string.h": "c",
+        "utils.h": "c"
+    }
+}
